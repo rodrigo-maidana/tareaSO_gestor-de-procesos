@@ -1,7 +1,6 @@
 package Implementacion;
 
 import Algoritmos.*;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -96,6 +95,6 @@ public class SchedulerGUI extends JFrame {
                 resultArea.append("Results of " + selectedAlgorithm + ":\n");
                 currentAlgorithm.printResults(resultArea);
             }
-        });
+        });        
     }
 }

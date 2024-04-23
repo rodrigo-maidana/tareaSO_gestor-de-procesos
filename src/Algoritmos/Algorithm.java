@@ -2,6 +2,7 @@ package Algoritmos;
 
 import Implementacion.ProcessBlock;
 import java.util.List;
+import javax.swing.JTextArea;
 
 public abstract class Algorithm {
     protected List<ProcessBlock> processList; // Lista de procesos a planificar
@@ -24,10 +25,10 @@ public abstract class Algorithm {
     }
 
     // Método para imprimir los resultados del algoritmo (podría ser redefinido en subclases si necesario)
-    public void printResults() {
-        System.out.println("Results of " + this.getClass().getSimpleName() + ":");
+    public void printResults(JTextArea resultArea) {
+        resultArea.append("Results of " + this.getClass().getSimpleName() + ":\n");
         for (ProcessBlock process : processList) {
-            System.out.println("Process " + process.getName() + " - State: " + process.getState());
+            resultArea.append("Process " + process.getName() + " - State: " + process.getState() + "\n");
         }
     }
 }

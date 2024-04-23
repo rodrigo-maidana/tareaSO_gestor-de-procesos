@@ -1,7 +1,9 @@
 package Algoritmos;
 
+import Implementacion.ProcessBlock;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.List;
 
 public class RR extends Algorithm {
     private int quantum; // Quantum de tiempo asignado a cada proceso

@@ -1,7 +1,9 @@
 package Algoritmos;
 
+import Implementacion.ProcessBlock;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 public class FCFS extends Algorithm {
 
