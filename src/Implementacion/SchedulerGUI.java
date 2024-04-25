@@ -6,6 +6,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class SchedulerGUI extends JFrame {
@@ -171,6 +173,9 @@ public class SchedulerGUI extends JFrame {
                                                     // lugar de 0
         }
         Object[][] data = new Object[processList.size()][maxTime + 2];
+
+        Collections.sort(processList, Comparator.comparing(ProcessBlock::getName)); // Ordena la lista de procesos por
+                                                                                    // nombre
 
         for (int i = 0; i < processList.size(); i++) {
             ProcessBlock block = processList.get(i);

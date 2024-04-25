@@ -15,48 +15,45 @@ public class SJFNonPreemptive extends Algorithm {
     // Implementación del método execute() para SJF no preemptivo
     @Override
     public void execute() {
-        // Ordenar los procesos por tiempo de llegada para manejar procesos que llegan al mismo tiempo
-        Collections.sort(processList, new Comparator<ProcessBlock>() {
-            public int compare(ProcessBlock p1, ProcessBlock p2) {
-                if (p1.getArrivalTime() == p2.getArrivalTime()) {
-                    return Integer.compare(p1.getBurstsToExecute(), p2.getBurstsToExecute());
-                }
-                return Integer.compare(p1.getArrivalTime(), p2.getArrivalTime());
-            }
-        });
+        // Ordenar los procesos por tiempo de llegada y por ráfagas en caso de empate
+        Collections.sort(processList, Comparator.comparingInt(ProcessBlock::getArrivalTime)
+                                                .thenComparingInt(ProcessBlock::getBurstsToExecute));
+
+        int currentTime = 0;
 
         // Mientras haya procesos no terminados
         while (!allProcessesCompleted()) {
-            // Encuentra el proceso listo con el menor número de ráfagas por ejecutar
-            ProcessBlock nextProcess = findNextProcess();
+            // Encuentra el proceso listo con el menor número de ráfagas por ejecutar que haya llegado
+            ProcessBlock nextProcess = findNextProcess(currentTime);
 
             if (nextProcess != null) {
-                nextProcess.setState("ejecutando");
+                // Actualizar tiempo de inicio si aún no ha comenzado
+                if (nextProcess.getStartTime() == -1) {
+                    nextProcess.setStartTime(currentTime);
+                }
+
                 // Ejecutar todas las ráfagas del proceso seleccionado
+                nextProcess.setState("ejecutando");
                 while (nextProcess.getBurstsExecuted() < nextProcess.getBurstsToExecute()) {
                     nextProcess.executeBurst();
+                    currentTime++; // Incrementa el tiempo actual del sistema
                 }
+                nextProcess.setEndTime(currentTime); // Establecer el tiempo de finalización
                 nextProcess.setState("terminado");
+            } else {
+                currentTime++; // Incrementar el tiempo si no hay procesos listos
             }
         }
     }
 
     private boolean allProcessesCompleted() {
-        for (ProcessBlock process : processList) {
-            if (!process.getState().equals("terminado")) {
-                return false;
-            }
-        }
-        return true;
+        return processList.stream().allMatch(process -> process.getState().equals("terminado"));
     }
 
-    private ProcessBlock findNextProcess() {
-        ProcessBlock shortest = null;
-        for (ProcessBlock process : processList) {
-            if (!process.getState().equals("terminado") && (shortest == null || process.getBurstsToExecute() < shortest.getBurstsToExecute())) {
-                shortest = process;
-            }
-        }
-        return shortest;
+    private ProcessBlock findNextProcess(int currentTime) {
+        return processList.stream()
+            .filter(process -> process.getArrivalTime() <= currentTime && process.getState().equals("nuevo"))
+            .min(Comparator.comparingInt(ProcessBlock::getBurstsToExecute))
+            .orElse(null);
     }
 }
