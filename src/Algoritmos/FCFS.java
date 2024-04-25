@@ -1,8 +1,6 @@
 package Algoritmos;
 
 import Implementacion.ProcessBlock;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class FCFS extends Algorithm {
@@ -15,21 +13,17 @@ public class FCFS extends Algorithm {
     // Implementación del método execute() para FCFS
     @Override
     public void execute() {
-        // Ordenar los procesos por tiempo de llegada
-        Collections.sort(processList, new Comparator<ProcessBlock>() {
-            public int compare(ProcessBlock p1, ProcessBlock p2) {
-                return Integer.compare(p1.getArrivalTime(), p2.getArrivalTime());
-            }
-        });
-
-        // Procesar cada proceso en el orden que llegaron
+        int currentTime = 0;
         for (ProcessBlock process : processList) {
-            process.setState("ejecutando");
-            // Simular la ejecución de cada ráfaga de ejecución
-            while (process.getBurstsExecuted() < process.getBurstsToExecute()) {
-                process.executeBurst();
+            if (currentTime < process.getArrivalTime()) {
+                currentTime = process.getArrivalTime();
             }
+            process.setStartTime(currentTime);
+            // Suponiendo que burstsToExecute es la duración total de ejecución del proceso
+            currentTime += process.getBurstsToExecute();
+            process.setEndTime(currentTime);
             process.setState("terminado");
+            // Actualizar otras estadísticas según sea necesario
         }
     }
 }

@@ -1,12 +1,14 @@
 package Implementacion;
 
 public class ProcessBlock {
-    private String name;                // Nombre del proceso
-    private int arrivalTime;            // Tiempo de llegada
-    private int burstsToExecute;        // Número de ráfagas por ejecutar
-    private int burstsExecuted;         // Número de ráfagas ejecutadas
-    private int priority;               // Prioridad del proceso
-    private String state;               // Estado del proceso (nuevo, listo, ejecutando, terminado)
+    private String name; // Nombre del proceso
+    private int arrivalTime; // Tiempo de llegada
+    private int burstsToExecute; // Número de ráfagas por ejecutar
+    private int burstsExecuted; // Número de ráfagas ejecutadas
+    private int priority; // Prioridad del proceso
+    private String state; // Estado del proceso (nuevo, listo, ejecutando, terminado)
+    private int startTime = -1; // -1 indica que aún no ha comenzado
+    private int endTime = -1; // -1 indica que aún no ha terminado
 
     // Constructor
     public ProcessBlock(String name, int arrivalTime, int burstsToExecute, int priority) {
@@ -67,6 +69,22 @@ public class ProcessBlock {
         this.state = state;
     }
 
+    public int getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(int startTime) {
+        this.startTime = startTime;
+    }
+
+    public int getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(int endTime) {
+        this.endTime = endTime;
+    }
+
     // Método para actualizar el estado del proceso
     public void updateState(String newState) {
         setState(newState);
@@ -80,5 +98,9 @@ public class ProcessBlock {
         if (this.burstsExecuted == this.burstsToExecute) {
             updateState("terminado");
         }
+    }
+
+    public boolean isRunningAt(int time) {
+        return time >= startTime && time < endTime;
     }
 }
