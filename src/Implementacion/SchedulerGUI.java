@@ -3,23 +3,24 @@ package Implementacion;
 import Algoritmos.*;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.ArrayList;
 
 public class SchedulerGUI extends JFrame {
     private JButton loadButton, executeButton;
     private JTextArea resultArea;
-    private List<ProcessBlock> processList;
-    private JTextField quantumField;
+
+    private ArrayList<ProcessBlock> processList;
+
     private JCheckBox cbFCFS;
     private JCheckBox cbSJFNonPreemptive;
     private JCheckBox cbSJFPreemptive;
     private JCheckBox cbPriority;
     private JCheckBox cbRR;
+    private JTextField quantumField;
     private JCheckBox cbHRRN;
 
     public SchedulerGUI() {
@@ -46,7 +47,7 @@ public class SchedulerGUI extends JFrame {
         cbHRRN = new JCheckBox("HRRN");
 
         // Crear campo de texto para el quantum del algoritmo RR
-        JLabel quantumLabel = new JLabel("Quantum:");
+        // JLabel quantumLabel = new JLabel("Quantum:");
         quantumField = new JTextField("4", 5); // 5 es el tamaño del campo
         quantumField.setEnabled(false); // Deshabilitar hasta que RR esté seleccionado
 
@@ -117,26 +118,36 @@ public class SchedulerGUI extends JFrame {
 
         executeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+
                 if (cbFCFS.isSelected()) {
-                    FCFS fcfs = new FCFS(processList);
+                    ResultsSheet frame = new ResultsSheet(processList, "FCFS");
+                    frame.setVisible(true);
+                    FCFS fcfs = new FCFS(frame.getTabla(), processList);
                     fcfs.execute();
-                    showExecutionGraph(fcfs.getProcessList());
                 }
+
                 if (cbSJFNonPreemptive.isSelected()) {
-                    SJFNonPreemptive sjfNonPreemptive = new SJFNonPreemptive(processList);
+                    ResultsSheet frame = new ResultsSheet(processList, "SJF Non-Preemptive");
+                    frame.setVisible(true);
+                    SJFNonPreemptive sjfNonPreemptive = new SJFNonPreemptive(frame.getTabla(),
+                            processList);
                     sjfNonPreemptive.execute();
-                    showExecutionGraph(sjfNonPreemptive.getProcessList());
                 }
+
                 if (cbSJFPreemptive.isSelected()) {
-                    SJFPreemptive sjfPreemptive = new SJFPreemptive(processList);
+                    ResultsSheet frame = new ResultsSheet(processList, "SJF Preemptive");
+                    frame.setVisible(true);
+                    SJFPreemptive sjfPreemptive = new SJFPreemptive(frame.getTabla(), processList);
                     sjfPreemptive.execute();
-                    showExecutionGraph(sjfPreemptive.getProcessList());
                 }
+
                 if (cbPriority.isSelected()) {
-                    Priority priority = new Priority(processList);
+                    ResultsSheet frame = new ResultsSheet(processList, "Priority");
+                    frame.setVisible(true);
+                    Priority priority = new Priority(frame.getTabla(), processList);
                     priority.execute();
-                    showExecutionGraph(priority.getProcessList());
                 }
+
                 if (cbRR.isSelected()) {
                     int quantum;
                     try {
@@ -144,75 +155,19 @@ public class SchedulerGUI extends JFrame {
                     } catch (NumberFormatException ex) {
                         quantum = 4; // Valor predeterminado si la entrada no es válida
                     }
-                    RR rr = new RR(processList, quantum);
+                    ResultsSheet frame = new ResultsSheet(processList, "Priority");
+                    frame.setVisible(true);
+                    RR rr = new RR(frame.getTabla(), processList, quantum);
                     rr.execute();
-                    showExecutionGraph(rr.getProcessList());
                 }
-                if (cbHRRN.isSelected()) {
-                    HRRN hrrn = new HRRN(processList);
-                    hrrn.execute();
-                    showExecutionGraph(hrrn.getProcessList());
-                }
+                /*
+                 * if (cbHRRN.isSelected()) {
+                 * HRRN hrrn = new HRRN(processList);
+                 * hrrn.execute();
+                 * }
+                 */
             }
+
         });
     }
-
-    // Método que puede ser sobreescrito o utilizado en subclases para preparar la
-    // visualización
-    // Método para mostrar la visualización de un algoritmo
-    public void showExecutionGraph(List<ProcessBlock> processList) {
-        // Calcula la cantidad de tiempo máximo en la línea de tiempo
-        int maxTime = processList.stream().mapToInt(ProcessBlock::getEndTime).max().orElse(0);
-
-        // Preparar los datos para la tabla
-        String[] columnNames = new String[maxTime + 2]; // +2 para incluir la columna de proceso y una columna extra al
-                                                        // final si el endTime es el último segundo
-        columnNames[0] = "Process";
-        for (int i = 1; i <= maxTime + 1; i++) {
-            columnNames[i] = String.valueOf(i - 1); // Puedes ajustar esto si quieres que el tiempo comience en 1 en
-                                                    // lugar de 0
-        }
-        Object[][] data = new Object[processList.size()][maxTime + 2];
-
-        Collections.sort(processList, Comparator.comparing(ProcessBlock::getName)); // Ordena la lista de procesos por
-                                                                                    // nombre
-
-        for (int i = 0; i < processList.size(); i++) {
-            ProcessBlock block = processList.get(i);
-            data[i][0] = block.getName();
-            if (block.getStartTime() != -1 && block.getEndTime() != -1) {
-                for (int j = block.getStartTime(); j < block.getEndTime(); j++) {
-                    data[i][j + 1] = "X"; // O algún otro marcador para indicar ejecución
-                }
-            }
-        }
-
-        // Crear la tabla y añadirla a una ventana emergente
-        JTable table = new JTable(data, columnNames) {
-            @Override // Sobreescribe este método para deshabilitar la edición de celdas
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-        table.setCellSelectionEnabled(false); // Opcional: deshabilita la selección de celdas
-        table.getTableHeader().setReorderingAllowed(false); // Evita que las columnas se reordenen
-        JScrollPane scrollPane = new JScrollPane(table); // Agrega la tabla a un JScrollPane
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED); // Habilita la barra de
-                                                                                             // desplazamiento
-                                                                                             // horizontal si es
-                                                                                             // necesario
-
-        // Configurar diálogo para mostrar la tabla
-        JDialog executionDialog = new JDialog(this, "Execution Timeline", true); // true para modal
-        executionDialog.setLayout(new BorderLayout());
-        executionDialog.add(scrollPane, BorderLayout.CENTER); // Agrega el JScrollPane al centro del diálogo
-
-        // Configurar el tamaño y la ubicación de la ventana emergente
-        executionDialog.setSize(new Dimension(1280, 720)); // Tamaño predeterminado, ajusta según sea necesario
-        executionDialog.setLocationRelativeTo(this); // Centra la ventana emergente en relación con la ventana principal
-
-        // Mostrar la ventana emergente
-        executionDialog.setVisible(true);
-    }
-
 }

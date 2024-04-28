@@ -4,12 +4,11 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class CSVReader {
 
-    public static List<ProcessBlock> leerArchivo(String rutaArchivo) throws IOException {
-        List<ProcessBlock> processList = new ArrayList<>();
+    public static ArrayList<ProcessBlock> leerArchivo(String rutaArchivo) throws IOException {
+        ArrayList<ProcessBlock> processList = new ArrayList<>();
         BufferedReader br = new BufferedReader(new FileReader(rutaArchivo));
         String line = br.readLine(); // Leer y descartar la línea de encabezado
 

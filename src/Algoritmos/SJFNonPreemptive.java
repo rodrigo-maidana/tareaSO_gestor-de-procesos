@@ -1,59 +1,39 @@
 package Algoritmos;
 
 import Implementacion.ProcessBlock;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.ArrayList;
+
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 public class SJFNonPreemptive extends Algorithm {
 
-    // Constructor que utiliza el constructor de la clase base
-    public SJFNonPreemptive(List<ProcessBlock> processList) {
-        super(processList);
+    public SJFNonPreemptive(JTable table, ArrayList<ProcessBlock> processList) {
+        super(table, processList);
     }
 
-    // Implementación del método execute() para SJF no preemptivo
     @Override
     public void execute() {
-        // Ordenar los procesos por tiempo de llegada y por ráfagas en caso de empate
-        Collections.sort(processList, Comparator.comparingInt(ProcessBlock::getArrivalTime)
-                                                .thenComparingInt(ProcessBlock::getBurstsToExecute));
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        int currentTime = 0; // Momento de llegada de procesos
 
-        int currentTime = 0;
+        while (existenRafagasPorEjecutar()) {
+            actualizarListaProcesos(currentTime);
+            if (!localProcessList.isEmpty()) {
+                ordenarProcesosPorRafagaRestante();
+                ProcessBlock currentProcess = localProcessList.get(0);
+                int processRow = getRow(currentProcess.getName());
 
-        // Mientras haya procesos no terminados
-        while (!allProcessesCompleted()) {
-            // Encuentra el proceso listo con el menor número de ráfagas por ejecutar que haya llegado
-            ProcessBlock nextProcess = findNextProcess(currentTime);
-
-            if (nextProcess != null) {
-                // Actualizar tiempo de inicio si aún no ha comenzado
-                if (nextProcess.getStartTime() == -1) {
-                    nextProcess.setStartTime(currentTime);
+                // Ejecutar el proceso actual hasta que termine
+                while (currentProcess.getBurstsToExecute() > 0) {
+                    modelo.setValueAt("X", processRow, currentTime + 1);
+                    currentProcess.executeBurst();
+                    currentTime++;
                 }
 
-                // Ejecutar todas las ráfagas del proceso seleccionado
-                nextProcess.setState("ejecutando");
-                while (nextProcess.getBurstsExecuted() < nextProcess.getBurstsToExecute()) {
-                    nextProcess.executeBurst();
-                    currentTime++; // Incrementa el tiempo actual del sistema
-                }
-                nextProcess.setEndTime(currentTime); // Establecer el tiempo de finalización
-                nextProcess.setState("terminado");
-            } else {
-                currentTime++; // Incrementar el tiempo si no hay procesos listos
+                // Remover el proceso cuando termine
+                localProcessList.remove(currentProcess);
             }
         }
-    }
-
-    private boolean allProcessesCompleted() {
-        return processList.stream().allMatch(process -> process.getState().equals("terminado"));
-    }
-
-    private ProcessBlock findNextProcess(int currentTime) {
-        return processList.stream()
-            .filter(process -> process.getArrivalTime() <= currentTime && process.getState().equals("nuevo"))
-            .min(Comparator.comparingInt(ProcessBlock::getBurstsToExecute))
-            .orElse(null);
     }
 }

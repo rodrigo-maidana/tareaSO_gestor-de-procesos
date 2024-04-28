@@ -92,15 +92,17 @@ public class ProcessBlock {
 
     // Método para incrementar las ráfagas ejecutadas
     public void executeBurst() {
-        if (this.burstsExecuted < this.burstsToExecute) {
-            this.burstsExecuted++;
-        }
-        if (this.burstsExecuted == this.burstsToExecute) {
-            updateState("terminado");
-        }
+        burstsExecuted++;
+        burstsToExecute--;
     }
 
     public boolean isRunningAt(int time) {
         return time >= startTime && time < endTime;
     }
+
+    public void setResponseRatio(int i) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setResponseRatio'");
+    }
+
 }

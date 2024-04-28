@@ -1,52 +1,67 @@
 package Algoritmos;
 
 import Implementacion.ProcessBlock;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.PriorityQueue;
+
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 public class HRRN extends Algorithm {
 
-    // Constructor que utiliza el constructor de la clase base
-    public HRRN(List<ProcessBlock> processList) {
-        super(processList);
+    public HRRN(JTable table, ArrayList<ProcessBlock> processList) {
+        super(table, processList);
     }
 
-    // Implementación del método execute() para HRRN
     @Override
-    public void execute() {
-        // Inicializar el tiempo actual del sistema
-        int currentTime = 0;
-
-        while (!allProcessesCompleted()) {
-            // Calcular el ratio de respuesta para cada proceso que no ha terminado
-            for (ProcessBlock process : processList) {
-                if (!process.getState().equals("terminado")) {
-                    double waitingTime = currentTime - process.getArrivalTime();
-                    double responseRatio = (waitingTime + process.getBurstsToExecute()) / (double) process.getBurstsToExecute();
-                    process.setPriority((int) (responseRatio * 100));  // Uso de la prioridad para almacenar el ratio temporalmente
-                }
-            }
-
-            // Seleccionar el proceso con el mayor ratio de respuesta
-            ProcessBlock nextProcess = Collections.max(processList, Comparator.comparingInt(ProcessBlock::getPriority));
-
-            // Procesar el proceso seleccionado
-            nextProcess.setState("ejecutando");
-            while (nextProcess.getBurstsExecuted() < nextProcess.getBurstsToExecute()) {
-                nextProcess.executeBurst();
-                currentTime++;
-            }
-            nextProcess.setState("terminado");
-        }
-    }
-
-    private boolean allProcessesCompleted() {
-        for (ProcessBlock process : processList) {
-            if (!process.getState().equals("terminado")) {
-                return false;
-            }
-        }
-        return true;
+    public void execute() {/*
+                            * DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+                            * int currentTime = 0; // Momento de llegada de procesos
+                            * PriorityQueue<ProcessBlock> readyQueue = new PriorityQueue<>(new
+                            * HRRNComparator()); // Cola de procesos listos con comparador HRRN
+                            * 
+                            * // Agregar procesos a la cola de listos
+                            * for (ProcessBlock process : processList) {
+                            * process.setResponseRatio(0); // Inicializar relación de respuesta
+                            * readyQueue.add(process);
+                            * }
+                            * 
+                            * while (!readyQueue.isEmpty()) {
+                            * ProcessBlock currentProcess = readyQueue.poll();
+                            * int processRow = getRow(currentProcess.getName());
+                            * 
+                            * // Calcular nuevo tiempo de espera
+                            * int waitingTime = currentTime - currentProcess.getArrivalTime();
+                            * 
+                            * // Calcular nuevo ratio de respuesta
+                            * currentProcess.setResponseRatio((waitingTime +
+                            * currentProcess.getBurstsToExecute()) / currentProcess.getBurstsToExecute());
+                            * 
+                            * // Ejecutar el proceso actual
+                            * modelo.setValueAt("X", processRow, currentTime + 1);
+                            * currentProcess.executeBurst();
+                            * currentTime++;
+                            * 
+                            * // Actualizar ratio de respuesta en la cola
+                            * for (ProcessBlock process : readyQueue) {
+                            * process.setResponseRatio((process.getWaitingTime() +
+                            * process.getBurstsToExecute()) / process.getBurstsToExecute());
+                            * }
+                            * 
+                            * // Si el proceso no ha terminado, regresarlo a la cola
+                            * if (currentProcess.getBurstsToExecute() > 0) {
+                            * readyQueue.add(currentProcess);
+                            * }
+                            * }
+                            * }
+                            * 
+                            * private class HRRNComparator implements Comparator<ProcessBlock> {
+                            * 
+                            * @Override
+                            * public int compare(ProcessBlock p1, ProcessBlock p2) {
+                            * return Double.compare(p2.getResponseRatio(), p1.getResponseRatio()); //
+                            * Ordenar descendentemente por ratio de respuesta
+                            * }
+                            */
     }
 }

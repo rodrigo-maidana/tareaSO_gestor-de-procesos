@@ -1,48 +1,48 @@
 package Algoritmos;
 
 import Implementacion.ProcessBlock;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.Queue;
-import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
+
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 public class RR extends Algorithm {
-    private int quantum; // Quantum de tiempo asignado a cada proceso
 
-    // Constructor que utiliza el constructor de la clase base
-    public RR(List<ProcessBlock> processList, int quantum) {
-        super(processList);
+    private int quantum; // Valor del quantum
+
+    public RR(JTable table, ArrayList<ProcessBlock> processList, int quantum) {
+        super(table, processList);
         this.quantum = quantum;
     }
 
-    // Implementación del método execute() para Round Robin
     @Override
     public void execute() {
-        Queue<ProcessBlock> readyQueue = new LinkedList<>(processList);
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        int currentTime = 0; // Momento de llegada de procesos
+        Queue<ProcessBlock> readyQueue = new LinkedBlockingQueue<>(); // Cola de procesos listos
 
-        // Inicializar el tiempo actual del sistema
-        int currentTime = 0;
+        // Agregar procesos a la cola de listos
+        for (ProcessBlock process : processList) {
+            readyQueue.add(process);
+        }
 
         while (!readyQueue.isEmpty()) {
             ProcessBlock currentProcess = readyQueue.poll();
-            if (currentProcess != null) {
-                currentProcess.setState("ejecutando");
+            int processRow = getRow(currentProcess.getName());
 
-                // Calcular el tiempo real que el proceso será ejecutado en este quantum
-                int timeToExecute = Math.min(quantum, currentProcess.getBurstsToExecute() - currentProcess.getBurstsExecuted());
-                // Simular la ejecución del proceso
-                for (int i = 0; i < timeToExecute; i++) {
-                    currentProcess.executeBurst();
-                    currentTime++;
-                }
+            // Ejecutar el proceso actual por un quantum
+            int quantumToExecute = Math.min(currentProcess.getBurstsToExecute(), quantum);
+            for (int i = 0; i < quantumToExecute; i++) {
+                modelo.setValueAt("X", processRow, currentTime + 1);
+                currentProcess.executeBurst();
+                currentTime++;
+            }
 
-                // Verificar si el proceso ha terminado
-                if (currentProcess.getBurstsExecuted() == currentProcess.getBurstsToExecute()) {
-                    currentProcess.setState("terminado");
-                } else {
-                    // Si el proceso no ha terminado, se agrega de nuevo al final de la cola
-                    currentProcess.setState("listo");
-                    readyQueue.offer(currentProcess);
-                }
+            // Si el proceso no ha terminado, regresarlo a la cola
+            if (currentProcess.getBurstsToExecute() > 0) {
+                readyQueue.add(currentProcess);
             }
         }
     }

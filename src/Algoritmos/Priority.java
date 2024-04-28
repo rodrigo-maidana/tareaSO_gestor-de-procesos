@@ -1,39 +1,43 @@
 package Algoritmos;
 
 import Implementacion.ProcessBlock;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
+
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 public class Priority extends Algorithm {
 
-    // Constructor que utiliza el constructor de la clase base
-    public Priority(List<ProcessBlock> processList) {
-        super(processList);
+    public Priority(JTable table, ArrayList<ProcessBlock> processList) {
+        super(table, processList);
     }
 
-    // Implementación del método execute() para el algoritmo de Prioridad
     @Override
     public void execute() {
-        // Ordenar los procesos por prioridad (menor número, mayor prioridad) y por tiempo de llegada como desempate
-        Collections.sort(processList, new Comparator<ProcessBlock>() {
-            @Override
-            public int compare(ProcessBlock p1, ProcessBlock p2) {
-                if (p1.getPriority() == p2.getPriority()) {
-                    return Integer.compare(p1.getArrivalTime(), p2.getArrivalTime());
-                }
-                return Integer.compare(p1.getPriority(), p2.getPriority());
-            }
-        });
+        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+        int currentTime = 0; // Momento de llegada de procesos
 
-        // Procesar cada proceso según el orden de prioridad
-        for (ProcessBlock process : processList) {
-            process.setState("ejecutando");
-            // Ejecutar todas las ráfagas del proceso seleccionado
-            while (process.getBurstsExecuted() < process.getBurstsToExecute()) {
-                process.executeBurst();
+        while (existenRafagasPorEjecutar()) {
+            actualizarListaProcesos(currentTime);
+            if (!localProcessList.isEmpty()) {
+                ordenarProcesosPorPrioridad();
+                ProcessBlock currentProcess = localProcessList.get(0);
+                int processRow = getRow(currentProcess.getName());
+
+                // Ejecutar el proceso actual por una unidad de tiempo
+                modelo.setValueAt("X", processRow, currentTime + 1);
+                currentProcess.executeBurst();
+
+                // Remover el proceso si ha terminado
+                if (currentProcess.getBurstsToExecute() == 0) {
+                    localProcessList.remove(currentProcess);
+                }
             }
-            process.setState("terminado");
+
+            currentTime++;
         }
     }
+
 }
