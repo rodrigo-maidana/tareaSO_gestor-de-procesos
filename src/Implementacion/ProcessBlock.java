@@ -9,6 +9,8 @@ public class ProcessBlock {
     private String state; // Estado del proceso (nuevo, listo, ejecutando, terminado)
     private int startTime = -1; // -1 indica que aún no ha comenzado
     private int endTime = -1; // -1 indica que aún no ha terminado
+    private int waitingTime; // Tiempo de espera
+    private double responseRatio; // Ratio de respuesta
 
     // Constructor
     public ProcessBlock(String name, int arrivalTime, int burstsToExecute, int priority) {
@@ -18,6 +20,7 @@ public class ProcessBlock {
         this.burstsExecuted = 0; // Inicialmente, no se han ejecutado ráfagas
         this.priority = priority;
         this.state = "nuevo"; // Estado inicial
+        this.waitingTime = 0; // Inicialmente, el tiempo de espera es 0
     }
 
     // Getters y Setters
@@ -85,6 +88,18 @@ public class ProcessBlock {
         this.endTime = endTime;
     }
 
+    public int getWaitingTime() {
+        return waitingTime;
+    }
+
+    public void setWaitingTime(int waitingTime) {
+        this.waitingTime = waitingTime;
+    }
+
+    public void incrementWaitingTime() {
+        waitingTime++;
+    }
+
     // Método para actualizar el estado del proceso
     public void updateState(String newState) {
         setState(newState);
@@ -100,9 +115,16 @@ public class ProcessBlock {
         return time >= startTime && time < endTime;
     }
 
-    public void setResponseRatio(int i) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setResponseRatio'");
+    public double getResponseRatio() {
+        return (double) (waitingTime + burstsToExecute) / burstsToExecute;
+    }
+
+    public void setResponseRatio(double responseRatio) {
+        this.responseRatio = responseRatio;
+    }
+
+    public void incrementWaitTime() {
+        waitingTime++;
     }
 
 }

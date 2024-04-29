@@ -160,14 +160,17 @@ public class SchedulerGUI extends JFrame {
                     RR rr = new RR(frame.getTabla(), processList, quantum);
                     rr.execute();
                 }
-                /*
-                 * if (cbHRRN.isSelected()) {
-                 * HRRN hrrn = new HRRN(processList);
-                 * hrrn.execute();
-                 * }
-                 */
+
+                if (cbHRRN.isSelected()) {
+                    ResultsSheet frame = new ResultsSheet(processList, "HRRN");
+                    frame.setVisible(true);
+                    HRRN hrrn = new HRRN(frame.getTabla(), processList);
+                    hrrn.execute();
+                }
+
             }
 
         });
     }
+
 }
