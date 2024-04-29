@@ -1,7 +1,5 @@
 package Implementacion;
 
-import java.util.ArrayList;
-
 public class ProcessBlock {
     private String name; // Nombre del proceso
     private int arrivalTime; // Tiempo de llegada
