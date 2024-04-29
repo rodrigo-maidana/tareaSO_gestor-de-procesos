@@ -2,8 +2,6 @@ package Algoritmos;
 
 import Implementacion.ProcessBlock;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;

@@ -10,7 +10,6 @@ public class ProcessBlock {
     private int startTime = -1; // -1 indica que aún no ha comenzado
     private int endTime = -1; // -1 indica que aún no ha terminado
     private int waitingTime; // Tiempo de espera
-    private double responseRatio; // Ratio de respuesta
 
     // Constructor
     public ProcessBlock(String name, int arrivalTime, int burstsToExecute, int priority) {
