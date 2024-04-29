@@ -1,5 +1,7 @@
 package Implementacion;
 
+import java.util.ArrayList;
+
 public class ProcessBlock {
     private String name; // Nombre del proceso
     private int arrivalTime; // Tiempo de llegada
@@ -121,4 +123,15 @@ public class ProcessBlock {
     public void incrementWaitTime() {
         waitingTime++;
     }
+
+    public ProcessBlock clone() {
+        ProcessBlock cloned = new ProcessBlock(this.name, this.arrivalTime, this.burstsToExecute, this.priority);
+        cloned.setBurstsExecuted(this.burstsExecuted);
+        cloned.setState(this.state);
+        cloned.setStartTime(this.startTime);
+        cloned.setEndTime(this.endTime);
+        cloned.setWaitingTime(this.waitingTime);
+        return cloned;
+    }
+
 }

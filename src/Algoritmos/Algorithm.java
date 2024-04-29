@@ -32,10 +32,6 @@ public abstract class Algorithm {
         return processList;
     }
 
-    public void setProcessList(ArrayList<ProcessBlock> processList) {
-        this.processList = processList;
-    }
-
     // llena el mapa de procesos
     public void fillNamesMap() {
         int i = 0;

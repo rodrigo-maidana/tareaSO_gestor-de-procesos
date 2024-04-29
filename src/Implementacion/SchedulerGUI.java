@@ -148,57 +148,68 @@ public class SchedulerGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
 
                 if (cbFCFS.isSelected()) {
-                    ResultsSheet frame = new ResultsSheet(processList, "FCFS");
+                    ArrayList<ProcessBlock> copiedProcessList = deepCopyList(processList);
+                    ResultsSheet frame = new ResultsSheet(copiedProcessList, "FCFS");
                     frame.setVisible(true);
-                    FCFS fcfs = new FCFS(frame.getTabla(), processList);
+                    FCFS fcfs = new FCFS(frame.getTabla(), copiedProcessList);
                     fcfs.execute();
                 }
 
                 if (cbSJFNonPreemptive.isSelected()) {
-                    ResultsSheet frame = new ResultsSheet(processList, "SJF Non-Preemptive");
+                    ArrayList<ProcessBlock> copiedProcessList = deepCopyList(processList);
+                    ResultsSheet frame = new ResultsSheet(copiedProcessList, "SJF Non-Preemptive");
                     frame.setVisible(true);
-                    SJFNonPreemptive sjfNonPreemptive = new SJFNonPreemptive(frame.getTabla(),
-                            processList);
+                    SJFNonPreemptive sjfNonPreemptive = new SJFNonPreemptive(frame.getTabla(), copiedProcessList);
                     sjfNonPreemptive.execute();
                 }
 
                 if (cbSJFPreemptive.isSelected()) {
-                    ResultsSheet frame = new ResultsSheet(processList, "SJF Preemptive");
+                    ArrayList<ProcessBlock> copiedProcessList = deepCopyList(processList);
+                    ResultsSheet frame = new ResultsSheet(copiedProcessList, "SJF Preemptive");
                     frame.setVisible(true);
-                    SJFPreemptive sjfPreemptive = new SJFPreemptive(frame.getTabla(), processList);
+                    SJFPreemptive sjfPreemptive = new SJFPreemptive(frame.getTabla(), copiedProcessList);
                     sjfPreemptive.execute();
                 }
 
                 if (cbPriority.isSelected()) {
-                    ResultsSheet frame = new ResultsSheet(processList, "Priority");
+                    ArrayList<ProcessBlock> copiedProcessList = deepCopyList(processList);
+                    ResultsSheet frame = new ResultsSheet(copiedProcessList, "Priority");
                     frame.setVisible(true);
-                    Priority priority = new Priority(frame.getTabla(), processList);
+                    Priority priority = new Priority(frame.getTabla(), copiedProcessList);
                     priority.execute();
                 }
 
                 if (cbRR.isSelected()) {
+                    ArrayList<ProcessBlock> copiedProcessList = deepCopyList(processList);
                     int quantum;
                     try {
                         quantum = Integer.parseInt(quantumField.getText());
                     } catch (NumberFormatException ex) {
                         quantum = 4; // Valor predeterminado si la entrada no es válida
                     }
-                    ResultsSheet frame = new ResultsSheet(processList, "Priority");
+                    ResultsSheet frame = new ResultsSheet(copiedProcessList, "RR");
                     frame.setVisible(true);
-                    RR rr = new RR(frame.getTabla(), processList, quantum);
+                    RR rr = new RR(frame.getTabla(), copiedProcessList, quantum);
                     rr.execute();
                 }
 
                 if (cbHRRN.isSelected()) {
-                    ResultsSheet frame = new ResultsSheet(processList, "HRRN");
+                    ArrayList<ProcessBlock> copiedProcessList = deepCopyList(processList);
+                    ResultsSheet frame = new ResultsSheet(copiedProcessList, "HRRN");
                     frame.setVisible(true);
-                    HRRN hrrn = new HRRN(frame.getTabla(), processList);
+                    HRRN hrrn = new HRRN(frame.getTabla(), copiedProcessList);
                     hrrn.execute();
                 }
-
             }
-
         });
+    }
+
+    private ArrayList<ProcessBlock> deepCopyList(ArrayList<ProcessBlock> originalList) {
+        ArrayList<ProcessBlock> copiedList = new ArrayList<>();
+        for (ProcessBlock pb : originalList) {
+            copiedList.add(pb.clone());
+        }
+        return copiedList;
     }
 
 }
