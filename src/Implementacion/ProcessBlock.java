@@ -118,10 +118,6 @@ public class ProcessBlock {
         return (double) (waitingTime + burstsToExecute) / burstsToExecute;
     }
 
-    public void setResponseRatio(double responseRatio) {
-        this.responseRatio = responseRatio;
-    }
-
     public void incrementWaitTime() {
         waitingTime++;
     }
