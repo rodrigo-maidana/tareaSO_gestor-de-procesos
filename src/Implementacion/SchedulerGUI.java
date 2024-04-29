@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import javax.swing.table.DefaultTableModel;
 
 public class SchedulerGUI extends JFrame {
     private JButton loadButton, executeButton;
@@ -22,6 +23,8 @@ public class SchedulerGUI extends JFrame {
     private JCheckBox cbRR;
     private JTextField quantumField;
     private JCheckBox cbHRRN;
+    private JTable table;
+    private DefaultTableModel tableModel;
 
     public SchedulerGUI() {
         super("Process Scheduler GUI");
@@ -62,6 +65,12 @@ public class SchedulerGUI extends JFrame {
         // Configurar área de texto para resultados
         resultArea = new JTextArea(20, 50);
         resultArea.setEditable(false);
+        // Initialising the table model
+        String[] columnNames = { "Process Name", "Arrival Time", "Burst Time", "Priority" }; // Asumiendo que
+                                                                                             // ProcessBlock
+                                                                                             // tiene estos campos
+        tableModel = new DefaultTableModel(columnNames, 0);
+        table = new JTable(tableModel);
     }
 
     private void layoutComponents() {
@@ -96,6 +105,11 @@ public class SchedulerGUI extends JFrame {
         this.add(topPanel, BorderLayout.NORTH); // Añadir el panel de la parte superior en la parte norte
         this.add(algorithmsPanel, BorderLayout.CENTER); // Añadir el panel de algoritmos en el centro
         this.add(scrollPane, BorderLayout.SOUTH); // Añadir el área de desplazamiento en el sur
+
+        JScrollPane tableScrollPane = new JScrollPane(table);
+        tableScrollPane.setPreferredSize(new Dimension(500, 200)); // Ajusta según necesites
+        this.add(tableScrollPane, BorderLayout.AFTER_LAST_LINE); // Asegúrate de agregarlo en la posición correcta del
+
     }
 
     private void addListeners() {
@@ -109,6 +123,20 @@ public class SchedulerGUI extends JFrame {
                         processList = CSVReader.leerArchivo(fileChooser.getSelectedFile().getAbsolutePath());
                         executeButton.setEnabled(true);
                         resultArea.setText("Processes loaded successfully!\n");
+
+                        // Limpiar la tabla antes de agregar nuevos datos
+                        tableModel.setRowCount(0);
+
+                        // Agregar procesos a la tabla
+                        for (ProcessBlock process : processList) {
+                            Object[] rowData = new Object[] {
+                                    process.getName(),
+                                    process.getArrivalTime(),
+                                    process.getBurstsToExecute(),
+                                    process.getPriority()
+                            };
+                            tableModel.addRow(rowData);
+                        }
                     } catch (Exception ex) {
                         resultArea.setText("Failed to load processes: " + ex.getMessage());
                     }
