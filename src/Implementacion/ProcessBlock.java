@@ -106,8 +106,8 @@ public class ProcessBlock {
 
     // Método para incrementar las ráfagas ejecutadas
     public void executeBurst() {
-        burstsExecuted++;
-        burstsToExecute--;
+        setBurstsExecuted(burstsExecuted + 1);
+        setBurstsToExecute(burstsToExecute - 1);
     }
 
     public boolean isRunningAt(int time) {
@@ -121,5 +121,4 @@ public class ProcessBlock {
     public void incrementWaitTime() {
         waitingTime++;
     }
-
 }

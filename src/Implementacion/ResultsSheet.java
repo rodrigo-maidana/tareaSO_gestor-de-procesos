@@ -51,10 +51,11 @@ public class ResultsSheet extends javax.swing.JFrame {
 
                                 }));
                 jScrollPane1.setViewportView(jTable1);
-
-                waitAverageJLabel.setText("jLabel2");
-
-                executionAverageJLabel.setText("jLabel2");
+                /*
+                 * waitAverageJLabel.setText("jLabel2");
+                 * 
+                 * executionAverageJLabel.setText("jLabel2");
+                 */
 
                 javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
                 getContentPane().setLayout(layout);
