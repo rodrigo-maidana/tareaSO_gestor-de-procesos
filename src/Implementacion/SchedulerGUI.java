@@ -31,9 +31,6 @@ public class SchedulerGUI extends JFrame {
         initializeComponents();
         layoutComponents();
         addListeners();
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        pack();
-        setVisible(true);
     }
 
     private void initializeComponents() {
@@ -62,9 +59,6 @@ public class SchedulerGUI extends JFrame {
             }
         });
 
-        // Configurar área de texto para resultados
-        resultArea = new JTextArea(20, 50);
-        resultArea.setEditable(false);
         // Initialising the table model
         String[] columnNames = { "Process Name", "Arrival Time", "Burst Time", "Priority" }; // Asumiendo que
                                                                                              // ProcessBlock
@@ -122,7 +116,6 @@ public class SchedulerGUI extends JFrame {
                     try {
                         processList = CSVReader.leerArchivo(fileChooser.getSelectedFile().getAbsolutePath());
                         executeButton.setEnabled(true);
-                        resultArea.setText("Processes loaded successfully!\n");
 
                         // Limpiar la tabla antes de agregar nuevos datos
                         tableModel.setRowCount(0);
